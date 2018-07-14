@@ -25,6 +25,7 @@ groups.
 from . import student
 import random
 
+
 class Group(object):
     """
     Group of students
@@ -50,8 +51,9 @@ class Group(object):
 
     def __str__(self):
         return "<Group {0}: Students {1}>".format(self.group_number,
-                                                    [str(s) for s in
-        self.students])
+                                                  [str(s) for s in
+                                                   self.students])
+
     def __repr__(self):
         return "Group(students={0}, group_number={1})".format(
             [repr(s) for s in self.students], self.group_number)
@@ -88,12 +90,17 @@ class Group(object):
         if s in self.students:
             s.group = None
             return self.students.remove(s)
-        else: raise AttemptToRemoveStudentNotInGroup
+        else:
+            raise AttemptToRemoveStudentNotInGroup
+
 
 def valid_swap(s1, s2):
     if s1 == s2:
         return False
     if s1.group == s2.group:
+        return False
+    # Added by thedadams on 07/13/18
+    if not (s1.swappable and s2.swappable):
         return False
     l1 = set(s1.group.students)
     l2 = set(s2.group.students)
@@ -101,6 +108,7 @@ def valid_swap(s1, s2):
     l1.add(s2)
     l2.remove(s2)
     l2.add(s1)
+
     def rules_permit(rules, old, new):
         for r in rules:
             if not r.permissable_change(old, new):
@@ -110,21 +118,25 @@ def valid_swap(s1, s2):
     return (rules_permit(s1.group.rules, s1.group.students, l1) and
             rules_permit(s2.group.rules, s2.group.students, l2))
 
+
 class AttemptToRemoveStudentNotInGroup(Exception):
     pass
+
 
 class AttemptToSwapStudentWithSelf(Exception):
     pass
 
+
 class InternalError(Exception):
     def __init__(self, msg):
         self.msg = msg
+
     def __str__(self):
         return "An internal error occured: {0}".format(self.msg)
 
 
 def swap(s1, s2):
-    if s1 is s2:
+    if s1 is s2 or not (s1.swappable and s2.swappable):
         raise AttemptToSwapStudentWithSelf
     group1 = s1.group
     group2 = s2.group
@@ -134,7 +146,7 @@ def swap(s1, s2):
     group2.add(s1)
 
 
-def make_initial_groups(course, balance_rules, group_number_offset=0):
+def make_initial_groups(course, balance_rules, group_number_offset=0, groups=[]):
 
     def strengths(s):
         return [r.get_strength(s) for r in balance_rules]
@@ -155,7 +167,26 @@ def make_initial_groups(course, balance_rules, group_number_offset=0):
     if len(course.students) != course.group_size * course.n_groups:
         raise InternalError("Students + Phantoms not divisible by groups")
 
-    course.students.sort(key = strengths)
+    course.students.sort(key=strengths)
+
+    # Added by thedadams on 07/13/18
+    i = 0
+    adding_to_groups = len(groups) != 0
+    if adding_to_groups:
+        j = 0
+        students = course.students[:]
+        random.shuffle(students)
+        while i < len(students):
+            while groups[j].size != course.group_size:
+                if students[i].swappable:
+                    groups[j].add(students[i])
+                i += 1
+                if i >= len(students):
+                    break
+            j += 1
+            if j >= len(groups):
+                break
+        return groups
 
     # randomly assort students into groups
     mtiles = [course.students[course.n_groups*i:(course.n_groups*(i+1))]
@@ -164,12 +195,14 @@ def make_initial_groups(course, balance_rules, group_number_offset=0):
     for mtile in mtiles:
         random.shuffle(mtile)
 
-    groups = []
-    i = 0
     while i < len(mtiles[0]):
-        # grab one student from each mtile
-        g = Group([mtile[i] for mtile in mtiles], i+1+group_number_offset)
-        groups.append(g)
+        if adding_to_groups:
+            for mtile in mtiles:
+                groups[i].add(mtile[i])
+        else:
+            # grab one student from each mtile
+            g = Group([mtile[i] for mtile in mtiles], i+1+group_number_offset)
+            groups.append(g)
         i += 1
 
     return groups

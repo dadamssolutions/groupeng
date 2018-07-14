@@ -19,12 +19,14 @@ import re
 from .utility import numberize
 from .errors import GroupEngFileError
 
+
 def read_input(infile):
     if not hasattr(infile, 'readlines'):
         infile = open(infile, 'U')
 
     lines = infile.readlines()
-    lines = [l.strip() for l in lines if l.strip() != '' and l.strip()[0] != '#']
+    lines = [l.strip() for l in lines if l.strip()
+             != '' and l.strip()[0] != '#']
 
     dek = {}
 
@@ -42,6 +44,9 @@ def read_input(infile):
             dek['student_identifier'] = split_key(line)[1]
         elif re.match('number_of_groups', line):
             dek['number_of_groups'] = int(split_key(line)[1])
+        # Added by thedadams on 07/13/18
+        elif re.match('add_to_groups', line):
+            dek['add_to_groups'] = split_key(line)[1]
         elif re.match('tries', line):
             dek['tries'] = int(split_key(line)[1])
         elif line[0] == '-':
@@ -73,8 +78,10 @@ def read_input(infile):
 
     return dek
 
+
 def split_key(st):
     return [s.strip() for s in st.split(':')]
+
 
 def union_group(item):
     items = [i.strip() for i in item.split('=')]

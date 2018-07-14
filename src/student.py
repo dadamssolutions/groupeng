@@ -27,12 +27,11 @@ import csv
 group_number = 'Group Number'
 
 
-
 class Student(object):
     """
     """
 
-    def __init__(self, data = {}, headers = [], identifier=None):
+    def __init__(self, data={}, headers=[], identifier=None):
         """
 
         Arguments:
@@ -41,6 +40,8 @@ class Student(object):
 
         """
         self.identifier = identifier
+        # Add by thedadams on 07/13/18
+        self.swappable = True
         if identifier == None:
             # if they don't give us an identifier, just use the first column
             self.identifier = headers[0]
@@ -66,6 +67,7 @@ class Student(object):
             return self.group.group_number
         else:
             return self.data[x]
+
     def __str__(self):
         return "<Student : {0}>".format(self.data)
 
@@ -76,11 +78,13 @@ class Student(object):
     def full_record(self):
         return [str(self[h]) for h in self.headers]
 
+
 def attribute_match(attribute, value):
     if isinstance(value, (list, tuple)):
         return lambda x: x[attribute] in value
     else:
         return lambda x: x[attribute] == value
+
 
 def attribute_differs(attribute, value):
     return lambda x: x[attribute] != value
@@ -106,7 +110,7 @@ def load_classlist(filename, identifier):
             pass
         else:
             d = {}
-            for i, h  in enumerate(headers):
+            for i, h in enumerate(headers):
                 d[h] = s[i].strip()
             # make a copy of headers so Student doesn't change it
             students.append(Student(d, list(headers), identifier))
