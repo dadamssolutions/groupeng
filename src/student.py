@@ -76,7 +76,7 @@ class Student(object):
             self.data, self.headers, self.identifier)
 
     def full_record(self):
-        return [str(self[h]) for h in self.headers]
+        return [str(self[h]) if self[h] is not None else "" for h in self.headers]
 
 
 def attribute_match(attribute, value):
