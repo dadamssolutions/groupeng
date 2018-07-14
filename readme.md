@@ -87,6 +87,6 @@ thedadams' Notes and Changes
 
 I have been using this software to help my current school separate students into the [House System](https://en.wikipedia.org/wiki/House_system). I have made a few changes to help with this goal.
 
-    -   I have been using the latest version of Python (3.7 at the time of this writing) and it works well. You can get that version [here](https://www.python.org/download).
-    -   I have changed the output of the student to print an empty string instead of 'None'.
-    -   I have added the extra option 'add_to_groups' to the config. We had the problem that the school was already sorted into houses and needed to add the incoming students to that arrangement. The 'aggregate' option wasn't working because the program considered 'None' as its own class when creating the subclasses. By adding 'add_to_groups : House' to the config file, the program will presort each student that is already in a House Then it add the remaining students based on the rest of the config.
+ -   I have been using the latest version of Python (3.7 at the time of this writing) and it works well. You can get that version [here](https://www.python.org/download).
+-   I have changed the output of the student to print an empty string instead of 'None'.
+-   I have added the extra option 'add_to_groups' to the config. We had the problem that the school was already sorted into houses and needed to add the incoming students to that arrangement. The 'aggregate' option wasn't working because the program considered 'None' as its own class when creating the subclasses. By adding 'add_to_groups : House' to the config file, the program will presort each student that is already in a House Then it add the remaining students based on the rest of the config.
