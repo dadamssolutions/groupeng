@@ -18,7 +18,8 @@
 import math
 from .errors import EmptyMean
 
-def mean(l, key = lambda x: x):
+
+def mean(l, key=lambda x: x):
     if hasattr(l, 'students'):
         l = l.students
     l = [key(x) for x in l if key(x) is not None]
@@ -26,7 +27,8 @@ def mean(l, key = lambda x: x):
         raise EmptyMean()
     return sum(l)/len(l)
 
-def std(l, key = lambda x: x):
+
+def std(l, key=lambda x: x):
     if hasattr(l, 'students'):
         l = l.students
     l = [x for x in l if key(x) is not None]
@@ -37,6 +39,7 @@ def std(l, key = lambda x: x):
         total += (x-m)**2
 
     return math.sqrt(total/len(v))
+
 
 def numberize(n):
     '''Turns a string into a number
