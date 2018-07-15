@@ -532,7 +532,7 @@ def apply_rule(rule, groups, students, tries, mixing, try_number=0):
             # finding new solutions
             for _ in range(mixing):
                 find_target_and_swap(random.choice(students), groups)
-            return apply_rule(rule, groups, students, try_number+1, tries, mixing)
+            return apply_rule(rule, groups, students, tries, mixing, try_number + 1)
         else:
             return False
     else:
