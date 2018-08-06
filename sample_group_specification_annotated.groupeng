@@ -1,8 +1,8 @@
 # Example input file for GroupEng
- 
+
 # Lines that start with a # are comments and GroupEng ignores them
 
-# The file that containes the student list.  This should be a csv
+# The file that contains the student list.  This should be a csv
 # file as exported from excel
 # Either store the input deck in the same directory as the class
 # file,  or give the full path to the class file here
@@ -13,7 +13,7 @@ student_identifier : ID
 
 # group_size: number of students per group immediately followed by + or -
 # If the students don't divide evenly into group_size person groups,
-# group size can be + (have an extra person in some groups), or 
+# group size can be + (have an extra person in some groups), or
 # - (have one less person in some groups)
 group_size : 4+
 
