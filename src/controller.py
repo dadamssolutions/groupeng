@@ -82,21 +82,7 @@ def run(input_deck):
     log.debug(sizer)
 
     # Added by thedadams on 07/13/18
-    groups = []
-    if 'add_to_groups' in dek:
-        attribute = dek['add_to_groups']
-        split_values = sorted(
-            list(set(s[attribute] for s in students if s[attribute])))
-        subclasses = [[s for s in students if s[attribute] == value]
-                      for value in split_values]
-        i = 0
-        for c in subclasses:
-            for s in c:
-                s.swappable = False
-            groups.append(Group(c, i+1))
-            i += 1
-        subcourses = [Course(students, sizer)]
-    elif dek_rules[0]['name'] == 'aggregate':
+    if dek_rules[0]['name'] == 'aggregate':
         attribute = dek_rules[0]['attribute']
         # Turn back into a list to make sure ordering is preserved when we use
         # this in multiple places
@@ -133,6 +119,18 @@ def run(input_deck):
 
         balance_rules = filter(lambda x: isinstance(x, Balance), rules)
 
+        groups = []
+        if 'add_to_groups' in dek:
+            attribute = dek['add_to_groups']
+            split_values = sorted(
+                list(set(s[attribute] for s in course.students if s[attribute])))
+            subclasses = [[s for s in course.students if s[attribute] == value] for value in split_values]
+            i = 0
+            for c in subclasses:
+                for s in c:
+                    s.swappable = False
+                groups.append(Group(c, group_number_offset + i+1))
+                i += 1
         groups = make_initial_groups(
             course, balance_rules, group_number_offset, groups)
         group_number_offset += course.n_groups
@@ -147,7 +145,7 @@ def run(input_deck):
         # group.make_initial_groups so that it can see the phantoms
         rules = [Distribute(identifier, course, 'phantom')] + rules
 
-        suceeded = apply_rules_list(
+        succeeded = apply_rules_list(
             rules, groups, course.students, tries=tries)
         log.debug("applied rules")
 
@@ -183,7 +181,7 @@ def run(input_deck):
 
     os.chdir('..')
 
-    return suceeded, outdir
+    return succeeded, outdir
 
 
 def statistics(rules, groups, students, balance_rules, input_deck_name, classlist, outf):
