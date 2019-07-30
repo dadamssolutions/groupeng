@@ -18,6 +18,7 @@
 import time
 import os
 import csv
+import random
 from operator import attrgetter
 from .group import make_initial_groups, Group
 from .utility import mean, std
@@ -61,10 +62,12 @@ def run(input_deck):
     log.debug('read input deck')
 
     students = load_classlist(dek['classlist'], dek.get('student_identifier'))
+    random.shuffle(students)
     log.debug('read class list')
     identifier = students[0].identifier
     dek_rules = dek['rules']
     tries = 5
+    attribute = None
     if 'tries' in dek:
         tries = dek['tries']
     log.debug('Allowing {} tries to get rules to work'.format(tries))
@@ -170,7 +173,7 @@ def run(input_deck):
     ########################################################################
     # Output
     ########################################################################
-    group_output(all_groups, outfile('groups.csv'), identifier)
+    group_output(all_groups, outfile('groups.csv'), identifier, sep='\t', attribute=attribute)
     group_output(all_groups, outfile('groups.txt'), identifier, sep='\n')
     statistics(rules, all_groups, students, balance_rules,
                input_deck, dek['classlist'], outfile('statistics.txt'))
@@ -236,12 +239,15 @@ def group_sort_key(g):
         return g.group_number
 
 
-def group_output(groups, outf, identifier, sep=', '):
+def group_output(groups, outf, identifier, sep=', ', attribute=None):
     for g in groups:
+        group_name = 'Group ' + str(g.group_number)
         students = sorted(g.students, key=lambda x: x[identifier])
-        outf.write('Group {0}{1}{2}\n'.format(g.group_number, sep,
-                                              sep.join([str(s[identifier]) for s in
-                                                        students])))
+        if attribute:
+            group_name = students[0][attribute]
+        outf.write('{0}{1}{2}\n'.format(group_name, sep,
+                                        sep.join([str(s[identifier]) for s in
+                                                  students])))
 
 
 def student_full_output(students, identifier, outf):

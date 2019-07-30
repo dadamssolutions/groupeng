@@ -506,7 +506,7 @@ def all_happy(groups):
 def all_satisfy_rule(groups, rule):
     for group in groups:
         if not group.satisfies_rule(rule):
-            print([s[rule.attribute] for s in group.students])
+            #print([s[rule.attribute] for s in group.students])
             return False
     return True
 

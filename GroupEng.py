@@ -43,9 +43,13 @@ if len(sys.argv) > 1:
     except KeyError:
         debug = False
     if debug:
-        status, outdir = controller.run(sys.argv[1])
-        if not status:
-            print('Could not completely meet all rules')
+        try:
+            status, outdir = controller.run(sys.argv[1])
+            if not status:
+                print('Could not completely meet all rules')
+        except Exception as e:
+            print("Something kept us from finishing")
+            print(e)
     else:
         try:
             status, outdir = controller.run(sys.argv[1])
