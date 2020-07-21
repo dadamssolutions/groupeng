@@ -72,7 +72,7 @@ def run(input_deck):
         tries = dek['tries']
     log.debug('Allowing {} tries to get rules to work'.format(tries))
 
-    log.debug("Using Rules: "+str(dek_rules))
+    log.debug("Using Rules: " + str(dek_rules))
 
     # This adds support for a "Hard" aggregate. If your first rule is
     # aggregate, we split the class on that attribute and treat each
@@ -132,7 +132,7 @@ def run(input_deck):
             for c in subclasses:
                 for s in c:
                     s.swappable = False
-                groups.append(Group(c, group_number_offset + i+1))
+                groups.append(Group(c, group_number_offset + i + 1))
                 i += 1
         groups = make_initial_groups(
             course, balance_rules, group_number_offset, groups)
@@ -168,7 +168,7 @@ def run(input_deck):
 
         all_groups = all_groups + groups
 
-    students = sorted(students, key=group_sort_key)
+    students = sorted([s for s in students if s.data[identifier] != 'phantom'], key=group_sort_key)
 
     ########################################################################
     # Output
@@ -244,7 +244,11 @@ def group_output(groups, outf, identifier, sep=', ', attribute=None):
         group_name = 'Group ' + str(g.group_number)
         students = sorted(g.students, key=lambda x: x[identifier])
         if attribute:
-            group_name = students[0][attribute]
+            group_name = None
+            i = 0
+            while group_name is None and i < len(students):
+                group_name = students[i][attribute]
+                i += 1
         outf.write('{0}{1}{2}\n'.format(group_name, sep,
                                         sep.join([str(s[identifier]) for s in
                                                   students])))
@@ -266,7 +270,7 @@ def student_augmented_output(students, rules, outf):
     headers = students[0].headers
 
     writer = csv.writer(outf)
-    writer.writerow(headers+add_headers)
+    writer.writerow(headers + add_headers)
 
     group_number = students[0].group_number
     num_student_headers = len(students[0].headers)
@@ -274,7 +278,7 @@ def student_augmented_output(students, rules, outf):
         # write out a summary of the previous group if we have gone to the next
         # group
         if s.group_number != group_number:
-            group = students[i-1].group
+            group = students[i - 1].group
             summary = ['summary']
             summary += [''] * num_student_headers
             summary += [str(mean(group.students, r.get_strength))
